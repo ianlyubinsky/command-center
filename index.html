@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command Center — Ian</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090a;
+    --surface: #0f1011;
+    --surface2: #191a1b;
+    --surface3: #28282c;
+    --border: rgba(255,255,255,0.08);
+    --border-subtle: rgba(255,255,255,0.05);
+    --text: #f7f8f8;
+    --text-secondary: #d0d6e0;
+    --text-muted: #8a8f98;
+    --text-faint: #62666d;
+    --accent: #5e6ad2;
+    --accent-bright: #7170ff;
+    --accent-hover: #828fff;
+    --green: #27a644;
+    --green-bright: #10b981;
+    --yellow: #c9953a;
+    --red: #c0392b;
+    --blue: #4a7fc1;
+    font-size: 14px;
+    font-feature-settings: 'cv01', 'ss03';
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    font-feature-settings: 'cv01', 'ss03';
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(8,9,10,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 32px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-left { display: flex; align-items: center; gap: 10px; }
+
+  .nav-logo {
+    width: 26px; height: 26px;
+    background: var(--accent);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: #fff; letter-spacing: -0.5px;
+  }
+
+  .nav-title { font-size: 14px; font-weight: 500; color: var(--text); letter-spacing: -0.2px; }
+  .nav-divider { width: 1px; height: 16px; background: var(--border); }
+  .nav-sub { font-size: 13px; color: var(--text-muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 8px; }
+
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green-bright);
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.2);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 2px rgba(16,185,129,0.2); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(16,185,129,0.08); }
+  }
+
+  .nav-date { font-size: 12px; color: var(--text-faint); font-variant-numeric: tabular-nums; }
+
+  /* LAYOUT */
+  main { max-width: 1120px; margin: 0 auto; padding: 48px 32px 96px; }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 36px; }
+  .page-header h1 {
+    font-size: 28px; font-weight: 600; letter-spacing: -0.704px;
+    color: var(--text); line-height: 1.1; margin-bottom: 8px;
+  }
+  .page-header p { font-size: 15px; color: var(--text-muted); letter-spacing: -0.165px; }
+
+  /* STATS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    transition: background 0.15s;
+  }
+
+  .stat-card:hover { background: rgba(255,255,255,0.035); }
+
+  .stat-label {
+    font-size: 11px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 0.6px; color: var(--text-faint); margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 28px; font-weight: 600; letter-spacing: -0.5px;
+    color: var(--text); line-height: 1;
+  }
+
+  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+
+  /* FILTERS */
+  .filter-bar {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 28px; flex-wrap: wrap;
+  }
+
+  .filter-label { font-size: 12px; color: var(--text-faint); margin-right: 4px; }
+
+  .filter-btn {
+    padding: 4px 13px;
+    border-radius: 9999px;
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Inter', sans-serif;
+    font-feature-settings: 'cv01', 'ss03';
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover { color: var(--text-secondary); border-color: var(--border); background: rgba(255,255,255,0.03); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* SECTION HEADERS */
+  .section-title {
+    font-size: 11px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--text-faint);
+    margin-bottom: 14px; margin-top: 32px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-title:first-of-type { margin-top: 0; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
+
+  /* GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 14px;
+  }
+
+  /* CARD */
+  .card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 10px 0 0 10px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .card.s-active::before { background: var(--green-bright); opacity: 1; }
+  .card.s-paused::before { background: var(--yellow); opacity: 1; }
+  .card.s-blocked::before { background: var(--red); opacity: 1; }
+  .card.s-planning::before { background: var(--blue); opacity: 1; }
+
+  .card:hover {
+    background: rgba(255,255,255,0.038);
+    border-color: rgba(255,255,255,0.13);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .card-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 12px; margin-bottom: 12px;
+  }
+
+  .card-icon-title { display: flex; align-items: center; gap: 10px; }
+
+  .card-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .icon-biz { background: rgba(94,106,210,0.15); }
+  .icon-dev { background: rgba(16,185,129,0.12); }
+  .icon-personal { background: rgba(201,149,58,0.12); }
+  .icon-mixed { background: rgba(74,127,193,0.12); }
+
+  .card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.24px; color: var(--text); line-height: 1.2; }
+  .card-cat { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+
+  .status-pill {
+    padding: 3px 9px; border-radius: 9999px;
+    font-size: 11px; font-weight: 500;
+    white-space: nowrap; flex-shrink: 0; letter-spacing: 0.1px;
+  }
+
+  .p-active { background: rgba(16,185,129,0.15); color: #4ddb9a; border: 1px solid rgba(16,185,129,0.25); }
+  .p-paused { background: rgba(201,149,58,0.12); color: #d4a050; border: 1px solid rgba(201,149,58,0.25); }
+  .p-blocked { background: rgba(192,57,43,0.12); color: #e06b5e; border: 1px solid rgba(192,57,43,0.25); }
+  .p-planning { background: rgba(74,127,193,0.12); color: #6fa8e0; border: 1px solid rgba(74,127,193,0.25); }
+
+  .card-desc {
+    font-size: 13px; color: var(--text-muted); line-height: 1.55;
+    margin-bottom: 16px; letter-spacing: -0.13px;
+  }
+
+  .card-sec-label {
+    font-size: 10px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 0.7px; color: var(--text-faint); margin-bottom: 6px;
+  }
+
+  .card-where {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px; padding: 10px 12px;
+    font-size: 13px; color: var(--text-secondary);
+    line-height: 1.5; margin-bottom: 14px; letter-spacing: -0.13px;
+  }
+
+  .card-steps { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+
+  .step-row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12.5px; color: var(--text-muted); line-height: 1.4;
+  }
+
+  .sdot {
+    width: 4px; height: 4px; border-radius: 50%;
+    margin-top: 5px; flex-shrink: 0;
+  }
+
+  .sdot-green { background: var(--green-bright); }
+  .sdot-yellow { background: var(--yellow); }
+  .sdot-blue { background: var(--blue); }
+  .sdot-red { background: var(--red); }
+
+  .more-hint {
+    font-size: 11.5px; color: var(--text-faint);
+    margin-top: 3px; transition: color 0.15s;
+    padding-left: 12px;
+  }
+  .card:hover .more-hint { color: var(--text-muted); }
+
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 14px; border-top: 1px solid var(--border-subtle);
+  }
+
+  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .tag {
+    padding: 2px 8px; border-radius: 3px;
+    font-size: 10.5px; font-weight: 500; letter-spacing: 0.1px;
+  }
+
+  .t-biz { background: rgba(94,106,210,0.12); color: #8a90d8; }
+  .t-dev { background: rgba(16,185,129,0.10); color: #4ddb9a; }
+  .t-personal { background: rgba(201,149,58,0.10); color: #c9a050; }
+  .t-neutral { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+
+  .card-updated { font-size: 11px; color: var(--text-faint); }
+
+  /* MODAL */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 28px;
+    max-width: 560px; width: 100%;
+    max-height: 85vh; overflow-y: auto;
+    box-shadow: rgba(0,0,0,0.5) 0px 8px 48px, rgba(94,106,210,0.08) 0px 0px 0px 1px;
+    transform: translateY(10px) scale(0.98);
+    transition: transform 0.2s ease;
+  }
+
+  .overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 16px; margin-bottom: 20px;
+  }
+
+  .modal-title {
+    font-size: 20px; font-weight: 600; letter-spacing: -0.4px;
+    color: var(--text); margin-bottom: 7px;
+  }
+
+  .modal-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text-faint); flex-wrap: wrap;
+  }
+
+  .modal-close-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle);
+    color: var(--text-muted); font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+    font-family: inherit; line-height: 1;
+  }
+
+  .modal-close-btn:hover { background: rgba(255,255,255,0.09); color: var(--text); }
+
+  .modal-divider { height: 1px; background: var(--border-subtle); margin: 18px 0; }
+
+  .modal-section { margin-bottom: 22px; }
+
+  .modal-sec-title {
+    font-size: 11px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 0.7px; color: var(--text-faint); margin-bottom: 10px;
+  }
+
+  .modal-section p {
+    font-size: 14px; color: var(--text-muted); line-height: 1.65; letter-spacing: -0.13px;
+  }
+
+  .modal-steps { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+  .modal-step {
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+
+  .step-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent); color: #c8ccf8;
+    font-size: 10px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
+  .step-txt { font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; letter-spacing: -0.13px; }
+
+  /* EMPTY */
+  .empty-state {
+    grid-column: 1/-1; text-align: center;
+    padding: 60px 24px; color: var(--text-faint); font-size: 14px;
+  }
+
+  /* FOOTER */
+  .site-footer {
+    border-top: 1px solid var(--border-subtle);
+    padding: 22px 32px;
+    max-width: 1120px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .footer-left { font-size: 12px; color: var(--text-faint); }
+  .footer-right { font-size: 12px; color: var(--text-faint); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    main { padding: 28px 16px 64px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid { grid-template-columns: 1fr; }
+    .page-header h1 { font-size: 22px; }
+    .site-footer { padding: 20px 16px; flex-direction: column; gap: 6px; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .nav-sub, .nav-divider { display: none; }
+    .stats-row { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <div class="nav-logo">I</div>
+    <span class="nav-title">Command Center</span>
+    <div class="nav-divider"></div>
+    <span class="nav-sub">Ian Lyubinsky</span>
+  </div>
+  <div class="nav-right">
+    <div class="live-dot"></div>
+    <span class="nav-date" id="nav-date"></span>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>Projects &amp; Objectives</h1>
+    <p>High-level view of everything in motion — where things are at and what's next.</p>
+  </div>
+
+  <div class="stats-row" id="stats-row"></div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('active',this)">Active</button>
+    <button class="filter-btn" onclick="setFilter('paused',this)">On Hold</button>
+    <button class="filter-btn" onclick="setFilter('planning',this)">Planning</button>
+    <button class="filter-btn" onclick="setFilter('biz',this)">Business</button>
+    <button class="filter-btn" onclick="setFilter('dev',this)">Dev</button>
+    <button class="filter-btn" onclick="setFilter('personal',this)">Personal</button>
+  </div>
+
+  <div class="cards-grid" id="cards-grid"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-left">Ian × folk &nbsp;·&nbsp; internal use only</div>
+  <div class="footer-right" id="footer-count"></div>
+</footer>
+
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<script>
+const projects = [
+  {
+    id: 1,
+    title: "Happy Wellness Group",
+    icon: "🏢",
+    iconType: "biz",
+    category: ["biz"],
+    catLabel: "Business · Advisory",
+    status: "active",
+    desc: "Wellness-focused investment and advisory firm affiliated with a FINRA-member broker/dealer (Craft Capital Management). Supporting founders and investors through fundraising, advisory, and access to a curated syndicate of angels, VCs, and family offices.",
+    whereAt: "Ongoing deal flow and investor matching. Main operational drag is catching up on email and Slack — core comms channels for this business.",
+    nextSteps: [
+      "Catch up on emails and Slack backlog",
+      "Draft and refine outbound email templates",
+      "Match investors to active deals in pipeline",
+      "Polish pitch decks for current raises"
+    ],
+    tags: ["fundraising","advisory","syndicate"],
+    tagTypes: ["biz","biz","biz"],
+    updated: "May 7, 2026"
+  },
+  {
+    id: 2,
+    title: "Tether",
+    icon: "📊",
+    iconType: "dev",
+    category: ["dev"],
+    catLabel: "Dev · SaaS",
+    status: "active",
+    desc: "Subscription tracker app with a privacy-first design philosophy. Key features: Ghost Meter (hidden subscriptions), 10-year compounding cost view, and cancel guides. Core principle — one dominant value prop, messaging clarity before branding.",
+    whereAt: "Landing page live in GitHub (ianlyubinsky/tether-landing). Colorway locked. Waitlist and paid ads are immediate growth levers. iOS prototype is the next big phase.",
+    nextSteps: [
+      "Finalize and launch the waitlist",
+      "Kick off paid ads campaign",
+      "Begin iOS prototype planning",
+      "Revisit colorway + branding after waitlist launch"
+    ],
+    tags: ["SaaS","iOS","waitlist"],
+    tagTypes: ["dev","dev","neutral"],
+    updated: "May 7, 2026"
+  },
+  {
+    id: 3,
+    title: "OpenClaw",
+    icon: "🔧",
+    iconType: "mixed",
+    category: ["dev","biz"],
+    catLabel: "Dev · Business",
+    status: "active",
+    desc: "Early-stage project with a specialist engaged at $750. Scope and deliverables are being defined. Tracking here to keep it on the radar.",
+    whereAt: "Specialist hired and paid. Scope, timeline, and deliverables are still being nailed down.",
+    nextSteps: [
+      "Define deliverables and timeline with specialist",
+      "Set up a regular check-in cadence",
+      "Add more context here as the project develops"
+    ],
+    tags: ["contracted","TBD"],
+    tagTypes: ["neutral","neutral"],
+    updated: "May 7, 2026"
+  },
+  {
+    id: 4,
+    title: "New House",
+    icon: "🏡",
+    iconType: "personal",
+    category: ["personal"],
+    catLabel: "Personal",
+    status: "active",
+    desc: "Recently moved in. Still unpacking, setting things up, and figuring out what's needed. Household items ordered from Amazon on a rolling basis via folk.",
+    whereAt: "Settling in — unpacking ongoing. Amazon orders handled as needs come up, just send them over.",
+    nextSteps: [
+      "Keep sending folk Amazon needs as they come up",
+      "Identify any remaining furniture or setup gaps",
+      "Get fully unpacked and settled"
+    ],
+    tags: ["home","setup"],
+    tagTypes: ["personal","personal"],
+    updated: "May 7, 2026"
+  }
+];
+
+const STATUS_LABEL = { active:"Active", paused:"On Hold", blocked:"Blocked", planning:"Planning" };
+const PILL_CLASS   = { active:"p-active", paused:"p-paused", blocked:"p-blocked", planning:"p-planning" };
+const DOT_CLASS    = { active:"sdot-green", paused:"sdot-yellow", blocked:"sdot-red", planning:"sdot-blue" };
+
+function statusLabel(s){ return STATUS_LABEL[s]||s; }
+function pillCls(s){ return PILL_CLASS[s]||""; }
+function dotCls(s){ return DOT_CLASS[s]||"sdot-green"; }
+
+function matchFilter(p,f){
+  if(f==="all") return true;
+  if(["active","paused","blocked","planning"].includes(f)) return p.status===f;
+  return p.category.includes(f);
+}
+
+function renderStats(){
+  const total   = projects.length;
+  const active  = projects.filter(p=>p.status==="active").length;
+  const biz     = projects.filter(p=>p.category.includes("biz")).length;
+  const dev     = projects.filter(p=>p.category.includes("dev")).length;
+  document.getElementById("stats-row").innerHTML=`
+    <div class="stat-card">
+      <div class="stat-label">Total Projects</div>
+      <div class="stat-value">${total}</div>
+      <div class="stat-sub">across all tracks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Active Now</div>
+      <div class="stat-value" style="color:#4ddb9a">${active}</div>
+      <div class="stat-sub">in motion</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Business</div>
+      <div class="stat-value" style="color:#8a90d8">${biz}</div>
+      <div class="stat-sub">advisory + deals</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Dev / Product</div>
+      <div class="stat-value" style="color:#4ddb9a">${dev}</div>
+      <div class="stat-sub">builds in progress</div>
+    </div>`;
+}
+
+function renderCards(filter){
+  const grid = document.getElementById("cards-grid");
+  grid.innerHTML = "";
+  const filtered = projects.filter(p=>matchFilter(p,filter));
+
+  if(!filtered.length){
+    grid.innerHTML='<div class="empty-state">No projects match this filter.</div>';
+    document.getElementById("footer-count").textContent="";
+    return;
+  }
+
+  const groups=[
+    {key:"active",label:"Active"},
+    {key:"planning",label:"Planning"},
+    {key:"paused",label:"On Hold"},
+    {key:"blocked",label:"Blocked"},
+  ];
+
+  const useHeaders = filter==="all";
+  let count=0;
+
+  groups.forEach(g=>{
+    const items=filtered.filter(p=>p.status===g.key);
+    if(!items.length) return;
+
+    if(useHeaders){
+      const h=document.createElement("div");
+      h.className="section-title";
+      h.style.gridColumn="1/-1";
+      h.textContent=g.label;
+      grid.appendChild(h);
+    }
+
+    items.forEach(p=>{ grid.appendChild(buildCard(p)); count++; });
+  });
+
+  document.getElementById("footer-count").textContent=`${count} project${count!==1?"s":""} shown`;
+}
+
+function buildCard(p){
+  const el=document.createElement("div");
+  el.className=`card s-${p.status}`;
+  el.onclick=()=>openModal(p.id);
+
+  const preview=p.nextSteps.slice(0,2);
+  const more=p.nextSteps.length-2;
+
+  const stepsHtml=preview.map(s=>`
+    <div class="step-row">
+      <div class="sdot ${dotCls(p.status)}"></div>
+      <span>${s}</span>
+    </div>`).join("");
+
+  const moreHtml=more>0
+    ?`<div class="more-hint">↗ ${more} more — tap to see all</div>`
+    :"";
+
+  const tagsHtml=p.tags.map((t,i)=>`<span class="tag t-${p.tagTypes[i]||"neutral"}">${t}</span>`).join("");
+
+  el.innerHTML=`
+    <div class="card-top">
+      <div class="card-icon-title">
+        <div class="card-icon icon-${p.iconType}">${p.icon}</div>
+        <div>
+          <div class="card-title">${p.title}</div>
+          <div class="card-cat">${p.catLabel}</div>
+        </div>
+      </div>
+      <span class="status-pill ${pillCls(p.status)}">${statusLabel(p.status)}</span>
+    </div>
+    <div class="card-desc">${p.desc}</div>
+    <div class="card-sec-label">Where Things Are At</div>
+    <div class="card-where">${p.whereAt}</div>
+    <div class="card-sec-label">Next Steps</div>
+    <div class="card-steps">${stepsHtml}${moreHtml}</div>
+    <div class="card-footer">
+      <div class="card-tags">${tagsHtml}</div>
+      <div class="card-updated">${p.updated}</div>
+    </div>`;
+  return el;
+}
+
+function openModal(id){
+  const p=projects.find(x=>x.id===id);
+  if(!p) return;
+  const steps=p.nextSteps.map((s,i)=>`
+    <li class="modal-step">
+      <div class="step-num">${i+1}</div>
+      <div class="step-txt">${s}</div>
+    </li>`).join("");
+  const tags=p.tags.map((t,i)=>`<span class="tag t-${p.tagTypes[i]||"neutral"}">${t}</span>`).join(" ");
+
+  document.getElementById("modal-body").innerHTML=`
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">${p.icon} ${p.title}</div>
+        <div class="modal-meta">
+          <span class="status-pill ${pillCls(p.status)}">${statusLabel(p.status)}</span>
+          <span>·</span><span>${p.catLabel}</span>
+          <span>·</span><span>Updated ${p.updated}</span>
+        </div>
+      </div>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-divider"></div>
+    <div class="modal-section">
+      <div class="modal-sec-title">Overview</div>
+      <p>${p.desc}</p>
+    </div>
+    <div class="modal-section">
+      <div class="modal-sec-title">Where Things Are At</div>
+      <p>${p.whereAt}</p>
+    </div>
+    <div class="modal-section">
+      <div class="modal-sec-title">Next Steps</div>
+      <ul class="modal-steps">${steps}</ul>
+    </div>
+    <div class="modal-section" style="margin-bottom:0">
+      <div class="modal-sec-title">Tags</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${tags}</div>
+    </div>`;
+
+  document.getElementById("overlay").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function closeModal(){
+  document.getElementById("overlay").classList.remove("open");
+  document.body.style.overflow="";
+}
+
+function handleOverlayClick(e){
+  if(e.target===document.getElementById("overlay")) closeModal();
+}
+
+function setFilter(f,btn){
+  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderCards(f);
+}
+
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
+
+function updateDate(){
+  const d=new Date();
+  document.getElementById("nav-date").textContent=d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
+}
+
+renderStats();
+renderCards("all");
+updateDate();
+</script>
+</body>
+</html>

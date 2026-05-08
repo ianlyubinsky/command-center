@@ -222,6 +222,8 @@
   .icon-dev { background: rgba(16,185,129,0.12); }
   .icon-personal { background: rgba(201,149,58,0.12); }
   .icon-mixed { background: rgba(74,127,193,0.12); }
+  .icon-ecom { background: rgba(201,149,58,0.15); }
+  .icon-setup { background: rgba(94,106,210,0.12); }
 
   .card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.24px; color: var(--text); line-height: 1.2; }
   .card-cat { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
@@ -295,6 +297,8 @@
   .t-dev { background: rgba(16,185,129,0.10); color: #4ddb9a; }
   .t-personal { background: rgba(201,149,58,0.10); color: #c9a050; }
   .t-neutral { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+  .t-ecom { background: rgba(201,149,58,0.13); color: #d4a050; }
+  .t-setup { background: rgba(94,106,210,0.10); color: #8a90d8; }
 
   .card-updated { font-size: 11px; color: var(--text-faint); }
 
@@ -367,9 +371,7 @@
 
   .modal-steps { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 
-  .modal-step {
-    display: flex; align-items: flex-start; gap: 10px;
-  }
+  .modal-step { display: flex; align-items: flex-start; gap: 10px; }
 
   .step-num {
     width: 20px; height: 20px; border-radius: 50%;
@@ -449,9 +451,10 @@
     <button class="filter-btn" onclick="setFilter('active',this)">Active</button>
     <button class="filter-btn" onclick="setFilter('paused',this)">On Hold</button>
     <button class="filter-btn" onclick="setFilter('planning',this)">Planning</button>
-    <button class="filter-btn" onclick="setFilter('biz',this)">Business</button>
     <button class="filter-btn" onclick="setFilter('dev',this)">Dev</button>
+    <button class="filter-btn" onclick="setFilter('ecom',this)">E-Commerce</button>
     <button class="filter-btn" onclick="setFilter('personal',this)">Personal</button>
+    <button class="filter-btn" onclick="setFilter('setup',this)">Setup</button>
   </div>
 
   <div class="cards-grid" id="cards-grid"></div>
@@ -470,26 +473,6 @@
 const projects = [
   {
     id: 1,
-    title: "Happy Wellness Group",
-    icon: "🏢",
-    iconType: "biz",
-    category: ["biz"],
-    catLabel: "Business · Advisory",
-    status: "active",
-    desc: "Wellness-focused investment and advisory firm affiliated with a FINRA-member broker/dealer (Craft Capital Management). Supporting founders and investors through fundraising, advisory, and access to a curated syndicate of angels, VCs, and family offices.",
-    whereAt: "Ongoing deal flow and investor matching. Main operational drag is catching up on email and Slack — core comms channels for this business.",
-    nextSteps: [
-      "Catch up on emails and Slack backlog",
-      "Draft and refine outbound email templates",
-      "Match investors to active deals in pipeline",
-      "Polish pitch decks for current raises"
-    ],
-    tags: ["fundraising","advisory","syndicate"],
-    tagTypes: ["biz","biz","biz"],
-    updated: "May 7, 2026"
-  },
-  {
-    id: 2,
     title: "Tether",
     icon: "📊",
     iconType: "dev",
@@ -497,7 +480,7 @@ const projects = [
     catLabel: "Dev · SaaS",
     status: "active",
     desc: "Subscription tracker app with a privacy-first design philosophy. Key features: Ghost Meter (hidden subscriptions), 10-year compounding cost view, and cancel guides. Core principle — one dominant value prop, messaging clarity before branding.",
-    whereAt: "Landing page live in GitHub (ianlyubinsky/tether-landing). Colorway locked. Waitlist and paid ads are immediate growth levers. iOS prototype is the next big phase.",
+    whereAt: "Landing page live in GitHub (ianlyubinsky/tether-landing). Colorway locked (dark green + warm off-white). Waitlist and paid ads are the immediate growth levers. iOS prototype is the next big phase.",
     nextSteps: [
       "Finalize and launch the waitlist",
       "Kick off paid ads campaign",
@@ -509,15 +492,15 @@ const projects = [
     updated: "May 7, 2026"
   },
   {
-    id: 3,
+    id: 2,
     title: "OpenClaw",
     icon: "🔧",
     iconType: "mixed",
-    category: ["dev","biz"],
-    catLabel: "Dev · Business",
+    category: ["dev"],
+    catLabel: "Dev · Product",
     status: "active",
-    desc: "Early-stage project with a specialist engaged at $750. Scope and deliverables are being defined. Tracking here to keep it on the radar.",
-    whereAt: "Specialist hired and paid. Scope, timeline, and deliverables are still being nailed down.",
+    desc: "Early-stage build with a specialist engaged at $750. Scope and deliverables are being defined. Tracking here to keep it visible.",
+    whereAt: "Specialist hired and paid. Scope, timeline, and deliverables are still being locked down.",
     nextSteps: [
       "Define deliverables and timeline with specialist",
       "Set up a regular check-in cadence",
@@ -528,7 +511,49 @@ const projects = [
     updated: "May 7, 2026"
   },
   {
+    id: 3,
+    title: "Superbin Experiment",
+    icon: "🗑️",
+    iconType: "ecom",
+    category: ["ecom","personal"],
+    catLabel: "E-Commerce · Side Hustle",
+    status: "active",
+    desc: "Testing the Superbin model — buying mystery bins, sorting through contents, and reselling individual items on eBay and other platforms. Tracking profitability, time investment, and whether it's worth scaling.",
+    whereAt: "Experiment in progress. Bins purchased, items being sorted and listed. eBay listings are the primary sales channel right now.",
+    nextSteps: [
+      "List current inventory on eBay",
+      "Track cost per bin vs. total resale revenue",
+      "Ship sold items promptly to maintain seller rating",
+      "Evaluate after first round — is the margin worth the time?",
+      "Decide whether to buy more bins or wind down"
+    ],
+    tags: ["eBay","resale","experiment"],
+    tagTypes: ["ecom","ecom","neutral"],
+    updated: "May 7, 2026"
+  },
+  {
     id: 4,
+    title: "Accounts & Tools Setup",
+    icon: "⚙️",
+    iconType: "setup",
+    category: ["setup","personal"],
+    catLabel: "Setup · Productivity",
+    status: "active",
+    desc: "Getting all core accounts and productivity tools properly configured — Google Workspace, Gmail, Slack, Akiflow, and anything else needed for a clean daily workflow.",
+    whereAt: "In progress. Some tools may already be partially set up. Need to audit what's connected and what still needs configuring.",
+    nextSteps: [
+      "Set up and configure Google / Gmail",
+      "Connect Slack and configure workspaces",
+      "Set up Akiflow and link calendar + tasks",
+      "Connect folk to Gmail and Slack for full integration",
+      "Audit any other tools and close the gaps"
+    ],
+    tags: ["Google","Slack","Akiflow","productivity"],
+    tagTypes: ["setup","setup","setup","setup"],
+    updated: "May 7, 2026"
+  },
+  {
+    id: 5,
     title: "New House",
     icon: "🏡",
     iconType: "personal",
@@ -543,7 +568,7 @@ const projects = [
       "Get fully unpacked and settled"
     ],
     tags: ["home","setup"],
-    tagTypes: ["personal","personal"],
+    tagTypes: ["personal","neutral"],
     updated: "May 7, 2026"
   }
 ];
@@ -565,8 +590,8 @@ function matchFilter(p,f){
 function renderStats(){
   const total   = projects.length;
   const active  = projects.filter(p=>p.status==="active").length;
-  const biz     = projects.filter(p=>p.category.includes("biz")).length;
   const dev     = projects.filter(p=>p.category.includes("dev")).length;
+  const ecom    = projects.filter(p=>p.category.includes("ecom")).length;
   document.getElementById("stats-row").innerHTML=`
     <div class="stat-card">
       <div class="stat-label">Total Projects</div>
@@ -579,14 +604,14 @@ function renderStats(){
       <div class="stat-sub">in motion</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Business</div>
-      <div class="stat-value" style="color:#8a90d8">${biz}</div>
-      <div class="stat-sub">advisory + deals</div>
+      <div class="stat-label">Dev / Product</div>
+      <div class="stat-value" style="color:#8a90d8">${dev}</div>
+      <div class="stat-sub">builds in progress</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Dev / Product</div>
-      <div class="stat-value" style="color:#4ddb9a">${dev}</div>
-      <div class="stat-sub">builds in progress</div>
+      <div class="stat-label">E-Commerce</div>
+      <div class="stat-value" style="color:#d4a050">${ecom}</div>
+      <div class="stat-sub">resale experiments</div>
     </div>`;
 }
 
